@@ -48,7 +48,7 @@ public :
     }
 
 
-    void generatePath( priority_queue<tuple<int, int, Puzzle>, vector<tuple<int, int, Puzzle>>, greater<tuple<int, int, Puzzle>>> &boards, set<vector<vector<int>>> &vis , int g ){
+    void generatePath( priority_queue<tuple<int, int, Puzzle>, vector<tuple<int, int, Puzzle>>, greater<tuple<int, int, Puzzle>>> &boards, set<vector<vector<int>>> &vis , int g , map< vector<vector<int>> , vector<vector<int>> > &parent){
         int x , y , temp , h;
         vector<vector<int>> new_board;
         for(int i = 0; i < 4; i++){
@@ -67,6 +67,7 @@ public :
             new_board[x][y] = temp;
             if( vis.find(new_board) == vis.end() ){
                 h = Manhatten_distance(new_board);
+                parent[new_board] = board;
                 boards.push({g + h + 1 , g + 1 , Puzzle(new_board)} );
                 vis.insert(new_board);
             }
@@ -81,6 +82,7 @@ public :
             new_board[x][y] = temp;
             if( vis.find(new_board) == vis.end() ){
                 h = Manhatten_distance(new_board);
+                parent[new_board] = board;
                 boards.push({g + h + 1, g + 1 , Puzzle(new_board)} );
                 vis.insert(new_board);
             }
@@ -95,6 +97,7 @@ public :
             new_board[x][y] = temp;
             if( vis.find(new_board) == vis.end() ){
                 h = Manhatten_distance(new_board);
+                parent[new_board] = board;
                 boards.push({g + h + 1 , g + 1 , Puzzle(new_board)} );
                 vis.insert(new_board);
             }
@@ -107,6 +110,7 @@ public :
             new_board[x][y] = temp;
             if( vis.find(new_board) == vis.end() ){
                 h = Manhatten_distance(new_board);
+                parent[new_board] = board;
                 boards.push({g + h + 1 , g + 1 , Puzzle(new_board)} );
                 vis.insert(new_board);
             }
@@ -204,7 +208,8 @@ int main(){
     int distance = Manhatten_distance(input);
     priority_queue<tuple<int, int, Puzzle>, vector<tuple<int, int, Puzzle>>, greater<tuple<int, int, Puzzle>>> boards;
     boards.push({ distance , 0  ,Puzzle(input)});
-
+    map< vector<vector<int>> , vector<vector<int>> > parent;
+    parent[input] = input;
     auto start = chrono :: high_resolution_clock :: now();
     Puzzle board;
     int g , f;
@@ -228,9 +233,30 @@ int main(){
             break;
         }
 
-        board.generatePath( boards , vis , g );
+        board.generatePath( boards , vis , g , parent);
+        
         
 
+    }
+    vector<vector<vector<int>>> path;
+    vector<vector<int>> curr ;
+    curr = ans;
+    while(curr != parent[curr]){
+        path.push_back(curr);
+        curr = parent[curr];
+
+
+    }
+    reverse( path.begin() , path.end());
+    for(int i = 0; i < path.size(); i++){
+        cout << "Move "<< i + 1 << endl;
+        for( int j = 0; j < 4; j++){
+            for( int k = 0 ; k < 4; k++){
+                cout << path[i][j][k] << " ";
+            }
+            cout << endl;
+        }
+        cout << endl;
     }
     return 0;
 }
