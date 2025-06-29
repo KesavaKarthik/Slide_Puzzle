@@ -4,6 +4,7 @@
 #include <queue>
 #include <map>
 #include <set>
+#include <chrono>
 using namespace std;
 
 int Manhatten_distance(vector<vector<int>> input ){
@@ -173,6 +174,7 @@ bool solvability_check(vector<vector<int>> input){
         }
     }
     int inversions = merge_sort(num);
+    cout << inversions << " "<< row_number << endl;
     if( (inversions + row_number) % 2 == 0) return false;
     else return true;
 }
@@ -202,6 +204,8 @@ int main(){
     int distance = Manhatten_distance(input);
     priority_queue<tuple<int, int, Puzzle>, vector<tuple<int, int, Puzzle>>, greater<tuple<int, int, Puzzle>>> boards;
     boards.push({ distance , 0  ,Puzzle(input)});
+
+    auto start = chrono :: high_resolution_clock :: now();
     Puzzle board;
     int g , f;
     while(!boards.empty()){
@@ -211,9 +215,16 @@ int main(){
         //board.print();
         //cout << " "<< endl;
         boards.pop();
+        if (g % 10 == 0) {
+            cout << "Currently at depth: " << g << ", Manhattan: " << f - g << endl;
+        }
         if( board.display() == ans){
             cout << "found " << endl;
             cout << "Count = " << g << endl;
+
+            auto end = chrono :: high_resolution_clock :: now();
+            auto duration = chrono::duration_cast<chrono::milliseconds>(end - start);
+            cout <<"Time taken to solve = " << duration.count() << " ms"<<endl;
             break;
         }
 
